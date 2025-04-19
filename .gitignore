@@ -172,3 +172,14 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Project
+.DS_Store
+run_configs/
+model_weights/
+pip-wheel-metadata/
+lightning_logs/
+.vscode/
+*.zip
+chest_xray/
+original_chest_xray

@@ -1,0 +1,11 @@
+data_preprocess:
+  original_dataset: "./original_chest_xray"
+  new_dataset: "./chest_xray"
+  image_size: 256
+
+model:
+  num_classes: 3
+  num_workers: 5
+  num_epochs: 50
+  weight_decay: 0.0001
+  batch_size: 32

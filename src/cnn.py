@@ -15,52 +15,64 @@ class PneuNet(pl.LightningModule):
             2: "PNEUMONIA_VIRUS"
         }
 
+        # Input: (batch_size, 1, H=256, W=256)
         self.conv_layer_1 = nn.Sequential(
-            nn.Conv2d(1, 4, kernel_size=5, padding="same"),   
+            nn.Conv2d(1, 4, kernel_size=5, padding="same"),   # Output: (batch_size, 4, H=256, W=256)
             nn.ReLU(),
-            nn.Conv2d(4, 16, kernel_size=5, padding="same"),   
+            nn.Conv2d(4, 16, kernel_size=5, padding="same"),  # Output: (batch_size, 16, H=256, W=256)
             nn.ReLU(),
         )
 
         self.conv_layer_2 = nn.Sequential(
-            nn.Conv2d(16, 64, kernel_size=5, padding="same"), 
+            nn.Conv2d(16, 64, kernel_size=5, padding="same"), # Output: (batch_size, 64, H=256, W=256)
             nn.ReLU(),
-            nn.AvgPool2d(2, stride=2)                         
+            nn.Conv2d(64, 64, kernel_size=5, padding="same"), # Output: (batch_size, 64, H=256, W=256)
+            nn.ReLU(),
+            nn.AvgPool2d(2, stride=2)                        # Output: (batch_size, 64, H=128, W=128)
         )
 
         self.conv_layer_3 = nn.Sequential(
-            nn.Conv2d(64, 256, kernel_size=5, padding="same"),
+            nn.Conv2d(64, 256, kernel_size=5, padding="same"),# Output: (batch_size, 256, H=128, W=128)
             nn.ReLU(),
-            nn.AvgPool2d(2, stride=2)                         
+            nn.Conv2d(256, 256, kernel_size=5, padding="same"),# Output: (batch_size, 256, H=128, W=128)
+            nn.ReLU(),
+            nn.AvgPool2d(2, stride=2)                         # Output: (batch_size, 256, H=64, W=64)
         )
 
         self.conv_layer_4 = nn.Sequential(
-            nn.Conv2d(256, 1024, kernel_size=5, padding="same"),
+            nn.Conv2d(256, 512, kernel_size=5, padding="same"),# Output: (batch_size, 512, H=64, W=64)
             nn.ReLU(),
-            nn.AvgPool2d(2, stride=2)                          
+            nn.Conv2d(512, 512, kernel_size=5, padding="same"),# Output: (batch_size, 512, H=64, W=64)
+            nn.ReLU(),
+            nn.AvgPool2d(2, stride=2)                          # Output: (batch_size, 512, H=32, W=32)
         )
 
         self.conv_layer_5 = nn.Sequential(
-            nn.Conv2d(1024, 256, kernel_size=5, padding="same"), 
+            nn.Conv2d(512, 256, kernel_size=5, padding="same"),# Output: (batch_size, 256, H=32, W=32)
             nn.ReLU(),
-            nn.AvgPool2d(2, stride=2)                           
+            nn.Conv2d(256, 256, kernel_size=5, padding="same"),# Output: (batch_size, 256, H=32, W=32)
+            nn.ReLU(),
+            nn.AvgPool2d(2, stride=2)                          # Output: (batch_size, 256, H=16, W=16)
         )
 
         self.conv_layer_6 = nn.Sequential(
-            nn.Conv2d(256, 128, kernel_size=5, padding="same"),
+            nn.Conv2d(256, 128, kernel_size=5, padding="same"),# Output: (batch_size, 128, H=16, W=16)
             nn.ReLU(),
-            nn.AvgPool2d(4, stride=4)                            
+            nn.Conv2d(128, 128, kernel_size=5, padding="same"),# Output: (batch_size, 128, H=16, W=16)
+            nn.ReLU(),
+            nn.AvgPool2d(4, stride=4)                          # Output: (batch_size, 128, H=4, W=4)
         )
 
+        # Flattened size: 128 * H/64 * W/64 = 128 * 4 * 4 = 2048
         self.fully_connected = nn.Sequential(
-            nn.BatchNorm1d(2048),
+            nn.BatchNorm1d(2048),                              # Input: (batch_size, 2048)
             nn.Dropout(0.5),
             nn.ReLU(),
-            nn.Linear(2048, 256),
+            nn.Linear(2048, 256),                              # Output: (batch_size, 256)
             nn.ReLU(),
-            nn.Linear(256, 64),
+            nn.Linear(256, 64),                                # Output: (batch_size, 64)
             nn.ReLU(),
-            nn.Linear(64, num_classes),
+            nn.Linear(64, num_classes),                        # Output: (batch_size, num_classes)
         )
 
         self.loss_fn = nn.CrossEntropyLoss()

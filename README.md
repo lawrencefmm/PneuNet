@@ -1,6 +1,65 @@
-# PneuNet
+# PneuNet: Pneumonia Classification from Chest X-Rays
 
-PneuNet is a deep learning project for detecting pneumonia from chest X-ray images using convolutional neural networks. It provides scripts for data preprocessing, model training, and prediction on new images.
+PneuNet is a deep learning system for detecting and classifying pneumonia types from chest X-ray images using convolutional neural networks. This project addresses a critical need for automated analysis of medical imaging to support clinical decision-making.
+
+## The Problem: Pneumonia Diagnosis Challenges
+Pneumonia causes over 2.5 million deaths annually worldwide. Key challenges include:
+- Distinguishing between bacterial and viral pneumonia (critical for treatment decisions)
+- High inter-class similarity in X-ray manifestations
+- Time-consuming manual analysis by radiologists
+- Limited access to expert diagnostics in developing regions
+
+PneuNet automates the classification process with three distinct categories:
+1. 🦠 **Bacterial Pneumonia**
+2. 🩺 **Normal** 
+3. 🦠 **Viral Pneumonia** 
+
+<!-- Example X-rays for each class -->
+
+### Example X-rays for Each Class
+
+Below are representative X-ray images for each classification category:
+
+1. **Bacterial Pneumonia**  
+![Bacterial Pneumonia X-ray](assets/person1_bacteria_1.jpeg)
+
+2. **Normal**  
+![Normal X-ray](assets/IM-0001-0001.jpeg)
+
+3. **Viral Pneumonia**  
+![Viral Pneumonia X-ray](assets/person16_virus_47.jpeg)
+
+
+<!--
+Bacterial: assets/bacterial_example.png
+Normal: assets/normal_example.png
+Viral: assets/viral_example.png
+-->
+
+## Dataset Preparation
+The model uses the [Chest X-Ray Images (Pneumonia)](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia) dataset from Kaggle, processed into three classes:
+
+| Class               | Samples |
+|---------------------|---------|
+| Bacterial Pneumonia | 2780   | 
+| Viral Pneumonia      | 1493   | 
+| Normal              | 1,583   | 
+
+## Image Preprocessing Pipeline
+Our preprocessing ensures optimal input for the neural network:
+
+1. **Grayscale Conversion**  
+   `transforms.Grayscale()` - Convert to single-channel images
+
+2. **Quality Control**  
+   - Remove images <256px in any dimension
+   - Verify file integrity through hash checks
+
+3. **Resizing**  
+   `transforms.Resize((256, 256))` using lanczos resampling:
+   ```python
+   image = image.resize((img_dimension, img_dimension), Image.LANCZOS)
+    ```
 
 ## Setup & Installation
 

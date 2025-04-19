@@ -110,14 +110,14 @@ def resize_images(root, img_dimension=256):
     for file in files:
         image = Image.open(file).convert("L")
         width, height = image.size
-        image = image.resize((img_dimension, img_dimension), Image.BILINEAR)
+        image = image.resize((img_dimension, img_dimension), Image.LANCZOS)
         image.save(file, quality=100)
         image.close()
 
 
 def __main__():
     with open("config.yaml") as stream:
-        config = yaml.safe_load(stream)
+        config = yaml.safe_load(stream)["data_preprocess"]
         logger.info("Loaded configuration file.")
 
     root = Path(config["new_dataset"])

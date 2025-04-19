@@ -29,13 +29,6 @@ Below are representative X-ray images for each classification category:
 3. **Viral Pneumonia**  
 ![Viral Pneumonia X-ray](assets/person16_virus_47.jpeg)
 
-
-<!--
-Bacterial: assets/bacterial_example.png
-Normal: assets/normal_example.png
-Viral: assets/viral_example.png
--->
-
 ## Dataset Preparation
 The model uses the [Chest X-Ray Images (Pneumonia)](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia) dataset from Kaggle, processed into three classes:
 
@@ -44,6 +37,32 @@ The model uses the [Chest X-Ray Images (Pneumonia)](https://www.kaggle.com/pault
 | Bacterial Pneumonia | 2780   | 
 | Viral Pneumonia      | 1493   | 
 | Normal              | 1,583   | 
+
+## Model Architecture
+
+PneuNet uses a deep convolutional neural network (CNN) designed for robust feature extraction from chest X-ray images. The architecture consists of:
+
+- **6 Convolutional Blocks:**  
+    Each block uses 2D convolutions with ReLU activations and progressively increases the number of channels. Pooling layers reduce spatial dimensions, enabling hierarchical feature learning.
+
+- **L2 Regularization:**  
+    Applied to the weights of the convolutional and fully connected layers to prevent overfitting and improve generalization.
+
+- **Batch Normalization & Dropout:**  
+  Applied before the fully connected layers to improve generalization and training stability.
+
+- **Fully Connected Layers:**  
+  The flattened feature map is passed through a series of dense layers, ending with a softmax output for 3-class classification (bacterial, viral, normal).
+
+- **Input:**  
+  Grayscale images resized to 256x256 pixels.
+
+- **Output:**  
+  Probability scores for each class.
+
+
+![PneuNet](assets/pneunet.png)
+
 
 ## Image Preprocessing Pipeline
 Our preprocessing ensures optimal input for the neural network:

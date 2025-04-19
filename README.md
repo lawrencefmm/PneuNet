@@ -55,14 +55,14 @@ python src/train_model.py
 ## Predict on a New Image
 
 Use the `predict.py` script to predict the class of a chest X-ray image.  
-Pass the image path as an argument:
+Pass the image path and model checkpoint path as arguments:
 
 ```bash
-python src/predict.py --image path/to/image.jpeg --checkpoint path/to/model.ckpt
+python src/predict.py --image path/to/image.jpeg --model_path path/to/model.ckpt
 ```
 
 - `--image`: Path to the image you want to classify.
-- `--checkpoint`: Path to the trained model checkpoint.
+- `--model_path`: Path to the trained model checkpoint (usually found in the `lightning_logs` directory, e.g., `lightning_logs/version_X/checkpoints/epoch=Y-step=Z.ckpt`).
 
 The script will output the predicted class for the image.
 

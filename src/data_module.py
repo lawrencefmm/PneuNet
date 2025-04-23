@@ -4,13 +4,13 @@ from torch.utils.data import DataLoader, random_split
 from torchvision import datasets, transforms
 
 class XRayDataModule(LightningDataModule):
-    def __init__(self, data_dir, batch_size=32, num_workers=4, image_size=256): # Increased default num_workers
+    def __init__(self, data_dir, batch_size=32, num_workers=4, image_size=256, seed=12947):
         super().__init__()
-        self.save_hyperparameters()
         self.data_dir = data_dir
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.image_size = image_size
+        self.seed = seed
 
         self.transform = transforms.Compose([
             transforms.Grayscale(num_output_channels=1),
@@ -49,7 +49,7 @@ class XRayDataModule(LightningDataModule):
         self.train_dataset, self.val_dataset, self.test_dataset = random_split(
             full_dataset,
             [train_size, val_size, test_size],
-            generator=torch.Generator().manual_seed(12947) # Seed for reproducible splits
+            generator=torch.Generator().manual_seed(self.seed) # Seed for reproducible splits
         )
 
     def train_dataloader(self):

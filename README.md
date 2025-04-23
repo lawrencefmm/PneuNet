@@ -36,14 +36,14 @@ The model uses the [Chest X-Ray Images (Pneumonia)](https://www.kaggle.com/pault
 |---------------------|---------|
 | Bacterial Pneumonia | 2780   | 
 | Viral Pneumonia      | 1493   | 
-| Normal              | 1,583   | 
+| Normal              | 1583   | 
 
 ## Model Architecture
 
-PneuNet uses a deep convolutional neural network (CNN) designed for robust feature extraction from chest X-ray images. The architecture consists of:
+PneuNet uses a deep residual convolutional neural network (CNN) designed for robust feature extraction from chest X-ray images. The architecture consists of:
 
-- **6 Convolutional Blocks:**  
-    Each block uses 2D convolutions with ReLU activations and progressively increases the number of channels. Pooling layers reduce spatial dimensions, enabling hierarchical feature learning.
+- **Residual Convolutional Blocks:**  
+    Each block uses 2D convolutions with ReLU activations and includes skip connections to improve gradient flow and mitigate vanishing gradients. Pooling layers reduce spatial dimensions, enabling hierarchical feature learning.
 
 - **L2 Regularization:**  
     Applied to the weights of the convolutional and fully connected layers to prevent overfitting and improve generalization.
@@ -54,15 +54,24 @@ PneuNet uses a deep convolutional neural network (CNN) designed for robust featu
 - **Fully Connected Layers:**  
   The flattened feature map is passed through a series of dense layers, ending with a softmax output for 3-class classification (bacterial, viral, normal).
 
+- **Cost Matrix for Loss Adjustment:**  
+  To reduce false positives, a **cost matrix** is applied during the loss calculation. This matrix assigns higher penalties to specific misclassifications, such as predicting "Normal" when the actual class is "Pneumonia Bacteria" or "Pneumonia Virus." The cost matrix is defined as:
+  ```python
+  cost_matrix = torch.tensor([
+      [0, 1, 1],  # True class: PNEUMONIA_BACTERIA
+      [10, 0, 10],  # True class: NORMAL
+      [1, 1, 0]   # True class: PNEUMONIA_VIRUS
+  ])
+  ```
+  During training, the loss is scaled by the cost associated with the predicted and true classes, ensuring the model prioritizes minimizing critical errors.
+
 - **Input:**  
   Grayscale images resized to 256x256 pixels.
 
 - **Output:**  
   Probability scores for each class.
 
-
 ![PneuNet](assets/pneunet.png)
-
 
 ## Image Preprocessing Pipeline
 Our preprocessing ensures optimal input for the neural network:
@@ -123,7 +132,7 @@ Run the preprocessing script to prepare the dataset:
 python src/preprocess.py
 ```
 
-## Train the Model
+## Training the Model
 
 Train the model using the provided training script:
 ```bash
@@ -146,4 +155,32 @@ The script will output the predicted class for the image.
 
 ---
 
-Adjust paths and filenames as needed for your setup.
+# Test Results Summary
+
+## Overall Metrics
+| Metric               | Value   |
+|----------------------|---------|
+| **Test Accuracy**    | 0.7181  |
+| **Macro Avg Precision** | 0.7580  |
+| **Macro Avg Recall**    | 0.7181  |
+
+---
+
+## Per-Class Metrics
+| Class                 | Precision | Recall   |
+|-----------------------|-----------|----------|
+| **PNEUMONIA_BACTERIA** | 0.7232    | 0.9040   |
+| **NORMAL**             | 0.8302    | 0.9053   |
+| **PNEUMONIA_VIRUS**    | 0.7207    | 0.3448   |
+
+---
+
+## Confusion Matrix
+
+| Actual \ Predicted    | PNEUMONIA_BACTERIA | NORMAL | PNEUMONIA_VIRUS |
+|-----------------------|--------------------:|-------:|----------------:|
+| **PNEUMONIA_BACTERIA** | 358                | 12     | 26              |
+| **NORMAL**             | 18                 | 220    | 5               |
+| **PNEUMONIA_VIRUS**    | 119                | 33     | 80              |
+
+---

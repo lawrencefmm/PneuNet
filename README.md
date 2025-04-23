@@ -43,10 +43,10 @@ The model uses the [Chest X-Ray Images (Pneumonia)](https://www.kaggle.com/pault
 PneuNet uses a deep residual convolutional neural network (CNN) designed for robust feature extraction from chest X-ray images. The architecture consists of:
 
 - **Residual Convolutional Blocks:**  
-    Each block uses 2D convolutions with ReLU activations and includes skip connections to improve gradient flow and mitigate vanishing gradients. Pooling layers reduce spatial dimensions, enabling hierarchical feature learning.
+   Each block uses 2D convolutions with ReLU activations and includes skip connections to improve gradient flow and mitigate vanishing gradients. Pooling layers reduce spatial dimensions, enabling hierarchical feature learning.
 
 - **L2 Regularization:**  
-    Applied to the weights of the convolutional and fully connected layers to prevent overfitting and improve generalization.
+   Applied to the weights of the convolutional and fully connected layers to prevent overfitting and improve generalization.
 
 - **Batch Normalization & Dropout:**  
   Applied before the fully connected layers to improve generalization and training stability.
@@ -58,12 +58,18 @@ PneuNet uses a deep residual convolutional neural network (CNN) designed for rob
   To reduce false positives, a **cost matrix** is applied during the loss calculation. This matrix assigns higher penalties to specific misclassifications, such as predicting "Normal" when the actual class is "Pneumonia Bacteria" or "Pneumonia Virus." The cost matrix is defined as:
   ```python
   cost_matrix = torch.tensor([
-      [0, 1, 1],  # True class: PNEUMONIA_BACTERIA
-      [10, 0, 10],  # True class: NORMAL
-      [1, 1, 0]   # True class: PNEUMONIA_VIRUS
+     [0, 1, 1],  # True class: PNEUMONIA_BACTERIA
+     [10, 0, 10],  # True class: NORMAL
+     [1, 1, 0]   # True class: PNEUMONIA_VIRUS
   ])
   ```
   During training, the loss is scaled by the cost associated with the predicted and true classes, ensuring the model prioritizes minimizing critical errors.
+
+- **Early Stopping:**  
+  To prevent overfitting, an early stopping mechanism monitors the validation loss during training. If the validation loss does not improve for a predefined number of epochs (patience), training is halted.
+
+- **Optimizer - AdamW:**  
+  The AdamW optimizer is used for training, which combines the benefits of Adam optimization with decoupled weight decay for better generalization. The optimizer is configured with the following parameters:
 
 - **Input:**  
   Grayscale images resized to 256x256 pixels.
@@ -184,3 +190,9 @@ The script will output the predicted class for the image.
 | **PNEUMONIA_VIRUS**    | 119                | 33     | 80              |
 
 ---
+
+## Training Results
+
+The training process achieved the following results:
+
+![Training Results](assets/train.png)

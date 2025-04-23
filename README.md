@@ -2,6 +2,21 @@
 
 PneuNet is a deep learning system for detecting and classifying pneumonia types from chest X-ray images using convolutional neural networks. This project addresses a critical need for automated analysis of medical imaging to support clinical decision-making.
 
+## Summary
+
+- [The Problem: Pneumonia Diagnosis Challenges](#the-problem-pneumonia-diagnosis-challenges)
+- [Example X-rays for Each Class](#example-x-rays-for-each-class)
+- [Dataset Preparation](#dataset-preparation)
+- [Model Architecture](#model-architecture)
+- [Image Preprocessing Pipeline](#image-preprocessing-pipeline)
+- [Setup & Installation](#setup--installation)
+- [Download the Kaggle Dataset](#download-the-kaggle-dataset)
+- [Preprocess the Data](#preprocess-the-data)
+- [Training the Model](#training-the-model)
+- [Predict on a New Image](#predict-on-a-new-image)
+- [Results and Performance](#test-results-summary)
+- [Training](#training-results)
+
 ## The Problem: Pneumonia Diagnosis Challenges
 Pneumonia causes over 2.5 million deaths annually worldwide. Key challenges include:
 - Distinguishing between bacterial and viral pneumonia (critical for treatment decisions)
